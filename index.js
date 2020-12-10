@@ -10,8 +10,14 @@ const perform_task = (command, args, socket) => {
   const task = spawn(command, args);
   task.stdout.on("data", data => socket.send(object_encode({type: "stdout", text: data.toString('utf-8')})));
   task.stderr.on("data", data => socket.send(object_encode({type: "stderr", text: data.toString('utf-8')})));
-  task.on("error", error => socket.send(`error reported: ${error.message}`));
-  task.on("close", code => socket.send(`Command ${command} completed with exit code: ${code}`));
+  task.on("error", error => { 
+    socket.send(`error reported: ${error.message}`)
+    socket.send('Error');
+  });
+  task.on("close", code => {
+    socket.send(`Command ${command} completed with exit code: ${code}`)
+    socket.send('Listen');
+  });  
 };
 
 // web interface for users
