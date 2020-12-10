@@ -5,8 +5,14 @@ const logInfo = function(text) {
     pre.innerHTML += text + "\n";
 };
 
-const terminateLink = document.querySelector('a.terminate');
-terminateLink.style.display = "none";
+const logOutput = function(object) {
+    const pre = document.querySelector('#Output');   
+    console.log(object);
+    pre.innerHTML += `[${object.type}] ${object.text}\n`;
+}
+
+const npmLink = document.querySelector('a.npm');
+npmLink.style.display = "none";
 
 // Create WebSocket connection.
 const socket = new WebSocket('ws://localhost:8080');
@@ -26,18 +32,20 @@ socket.addEventListener('close', function (event) {
 socket.addEventListener('message', function (event) {    
     if(event.data == "Listen") {
         logInfo("Server says it is listening, triggering now");        
-        terminateLink.style.display = "block";
-        socket.send("Start");
+        npmLink.style.display = "block";                
+    } else if(event.data.startsWith("JSON:")) {
+        const object = JSON.parse(event.data.split("JSON:")[1]);
+        logOutput(object);
     } else {
         logInfo("Message: " + event.data);
     }
 });
 
-terminateLink.addEventListener('click', function(event) {
+npmLink.addEventListener('click', function(event) {
     event.preventDefault();
-    socket.send('Stop');
-    logInfo("Stop requested.");
-    terminateLink.style.display = "none";
+    socket.send('Install');
+    logInfo("Npm install requested.");
+    npmLink.style.display = "none";
 });
 
 })();
