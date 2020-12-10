@@ -1,5 +1,6 @@
 # websockets-test
 
-Run the server as `node index.js`
+Run as `node index.js`
 
-Run the client using `serve` like `npx serve client/`
+- WebSockets server broadcasts on localhost:8080
+- HTTP Web server is ready at http://localhost:5000 serving contents of `client/` folder.
